@@ -780,9 +780,12 @@ function core:QUEST_LOG_UPDATE()
 	
 	if (not self.questInit) then
 		for i=1,GetNumQuestLogEntries() do
-			local _, _, _, _, _, _, _, _, id = GetQuestLogTitle(i);
-			if (id and id > 0) then
-				self.questLog[id] = true;
+			local _, _, _, isHeader, _, _, _, id = GetQuestLogTitle(i);
+			if (not isHeader) then
+				--self:Print("GetQuestLogTitle("..tostring(i).."): "..tostring(id or "nil"));
+				if ((id or 0) > 0) then 
+					self.questLog[id] = true;
+				end;
 			end
 		end
 		self:Debug("Quest Log snapshot saved");
@@ -792,7 +795,7 @@ function core:QUEST_LOG_UPDATE()
 		-- self:Debug("QUEST_LOG_UPDATE");
 		local tempLog = {};
 		for i=1,GetNumQuestLogEntries() do
-			local name, _, _, _, _, _, _, _, id = GetQuestLogTitle(i);
+			local name, _, _, _, _, _, _, id = GetQuestLogTitle(i);
 			-- self:Debug("   ", name, id);
 			if (id and id > 0) then
 				tempLog[id] = name;
@@ -838,7 +841,7 @@ end
 function core:AbandonQuest()
 	-- saved quest was abandoned
 	-- self:Debug("AbandonQuest");
-	local name, _, _, _, _, _, _, _, id = GetQuestLogTitle(self.abandonQuest);
+	local name, _, _, _, _, _, _, id = GetQuestLogTitle(self.abandonQuest);
 	self:Debug("Quest abandoned:",name);
 	self.questLog[id] = nil;
 	self:UpdatePins(true)
